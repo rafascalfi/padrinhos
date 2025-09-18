@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>magic.com — Os Padrinhos Mágicos</title>
+
+<!-- Fontes lúdicas (Google Fonts) -->
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Freckle+Face&family=Kanit:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --pink-500:#ff66b2;
+    --pink-400:#ff8ccf;
+    --pink-100:#fff2f8;
+    --green-600:#0a8c4d;
+    --green-500:#17b66b;
+    --green-100:#eaffef;
+    --bg:#f9fff9;
+    --card:#ffffff;
+    --muted:#526b5a;
+    --shadow: 0 12px 30px rgba(10,140,77,.12);
+    --radius:18px;
+    --accent:rgb(235, 110, 212);
+  }
+  *{box-sizing:border-box}
+  
+html, body {
+    margin:0; font-family: 'Kanit', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: url('capa.png') center center / cover no-repeat fixed;
+    background-color: rgba(249, 255, 249, 0.85);
+    background-blend-mode: lighten;
+    -webkit-font-smoothing:antialiased; color:#102a20;
+    display:flex; flex-direction:column;
+}
+
+
+/* Fundo especial para páginas internas */
+#login, #register, #categories, #gameShell {
+    background: 
+      linear-gradient(135deg, rgba(255,182,193,0.6), rgba(193,255,182,0.6), rgba(220,182,255,0.6));
+}
+
+
+
+  body{
+    margin:0; font-family: 'Kanit', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background:
+      radial-gradient(900px 400px at 10% -10%, var(--pink-100), transparent 40%),
+      radial-gradient(1000px 400px at 110% 10%, var(--green-100), transparent 40%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased; color:#102a20;
+    display:flex; flex-direction:column;
+  }
+
+  /* Topbar */
+  header.topbar{
+    position:sticky; top:0; z-index:60;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.9rem 1.25rem;
+    background:linear-gradient(90deg,var(--pink-500),var(--green-600));
+    color:rgb(251, 251, 251); box-shadow:var(--shadow);
+  }
+  .brand{display:flex; align-items:center; gap:.75rem}
+  .logoBadge{
+    width:56px; height:56px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(0,0,0,.12);
+  }
+  .logoBadge img{width:44px; height:44px; object-fit:cover; border-radius:8px}
+  .brand h1{margin:0; font-family:'Luckiest Guy', 'Freckle Face', cursive; font-size:1.25rem}
+  .brand p{margin:0; font-size:.82rem; opacity:.95; font-weight:700}
+
+  nav.topnav{display:flex; gap:.5rem; align-items:center}
+  .btn{
+    border:none; padding:.55rem .85rem; border-radius:12px; cursor:pointer; font-weight:800;
+    transition:transform .08s ease, box-shadow .12s ease, opacity .12s;
+  }
+  .btn:active{transform:translateY(2px)}
+  .btn.ghost{background:transparent;color:rgb(255, 255, 255);opacity:.95}
+  .btn.primary{background:var(--green-600); color:rgb(0, 0, 0); box-shadow:0 6px 14px rgba(10,140,77,.16)}
+  .btn.pink{background:var(--pink-500); color:rgb(255, 255, 255); box-shadow:0 6px 14px rgba(255,102,178,.12)}
+  .btn.icon{padding:.4rem .6rem; border-radius:10px}
+
+  main{max-width:1150px; margin:1.2rem auto; width:100%; padding:0 1rem; flex:1}
+
+  /* Views */
+  .view{display:none}
+  .view.active{display:block; animation:fade .28s ease}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+  /* HERO mais divertido */
+  .hero{
+    display:grid; grid-template-columns: 420px 1fr; gap:1.2rem; align-items:center;
+  }
+  .cover{
+    border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+    border:4px solid rgba(255,255,255,.6);
+    background:linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.2));
+  }
+  .cover img{width:100%; height:100%; object-fit:cover; display:block; max-height:360px}
+
+  .heroCard{
+    background: linear-gradient(180deg,#a6e9ce,#fba5ef);
+    border-radius:var(--radius); padding:1.2rem; box-shadow:var(--shadow);
+  }
+  .heroTitle{font-family:'Luckiest Guy', 'Freckle Face', cursive; color:var(--green-600); font-size:2rem; margin:0}
+  .heroTag{font-weight:800; color:var(--muted); margin-top:.4rem}
+
+  /* CTA grande e divertido */
+  .bigActions{display:flex; gap:.6rem; margin-top:1rem; flex-wrap:wrap}
+  .ctaBig{
+    border-radius:14px; padding:.9rem 1.2rem; font-weight:900; font-size:1rem; cursor:pointer; box-shadow:0 8px 22px rgba(0,0,0,.08);
+  }
+  .ctaBig.play{background:linear-gradient(90deg,var(--green-600),#12d07c); color:#fff}
+  .ctaBig.join{background:linear-gradient(90deg,var(--pink-500),#ff9acb); color:#fff}
+  .ctaTiny{background:var(--accent); padding:.5rem .7rem; border-radius:10px; font-weight:900}
+
+  /* Category cards (colorful) */
+  .cats{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-top:1rem}
+  .cat{
+    border-radius:14px; padding:1rem; cursor:pointer; font-weight:900; color:#fff; display:flex; flex-direction:column; gap:.4rem;
+    box-shadow:0 8px 24px rgba(0,0,0,.08); min-height:120px;
+  }
+  .cat .title{font-size:1.05rem}
+  .cat .desc{font-weight:600; opacity:.95}
+  .cat.math{background:linear-gradient(180deg,#ffd0f0,#ff8fcf)}
+  .cat.port{background:linear-gradient(180deg,#ffedd0,#ffc57a); color:#3a2a00}
+  .cat.hist{background:linear-gradient(180deg,#d3f9ff,#8fe0ff); color:#03394a}
+  .cat.science{background:linear-gradient(180deg,#fff7d6,#ffd95b); color:#5a3a00}
+
+  .card{background:var(--card); border-radius:12px; padding:1rem; box-shadow:var(--shadow); margin-bottom:1rem}
+
+  /* Profile */
+  .profile{
+    display:flex; gap:.9rem; align-items:center;
+  }
+  .avatar{
+    width:84px; height:84px; border-radius:14px; overflow:hidden; border:3px solid #cbc2c9a7; box-shadow:0 8px 22px rgba(0,0,0,.12);
+  }
+  .avatar img{width:100%; height:100%; object-fit:cover}
+  .profile h3{margin:0; font-family:'Luckiest Guy', cursive; font-size:1.1rem}
+
+  /* HUD */
+  .hud{display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:.8rem}
+  .pill{background:linear-gradient(180deg,#f7f7f7,#dbe1de); border-radius:999px; padding:.45rem .75rem; font-weight:800; color:var(--green-600)}
+
+  /* Game layout */
+  .gameWrap{display:grid; grid-template-columns:1fr 340px; gap:1rem; align-items:start}
+  .gameArea{min-height:360px}
+  .sidebar{position:sticky; top:96px}
+
+  /* choices / draggables */
+  .choices{display:grid; gap:.6rem; grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}
+  .choice, .draggable{
+    background:#f3f3f3; border-radius:12px; padding:.7rem; text-align:center; font-weight:900; border:2px solid #000000; cursor:grab;
+    box-shadow:0 6px 16px rgba(0,0,0,.06);
+  }
+  .dropzone{background:linear-gradient(180deg,#ffffff,#fffdfd); min-height:56px; display:flex; gap:.5rem; align-items:center; padding:.6rem; border-radius:12px; border:2px dashed #e6f5ea;}
+
+  .feedback{font-weight:900; margin-top:.6rem}
+  .ok{color:var(--green-600)} .err{color:#b00020}
+
+  .timeline{display:flex; gap:.6rem; flex-wrap:wrap}
+  .time-card{background:#fff; padding:.6rem .8rem; border-radius:12px; cursor:grab; border:2px solid #eef6f0; font-weight:800}
+
+  .gridMem{display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem}
+  .cardMem{height:88px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:900; background:#fff; border:2px solid #eef6f0; cursor:pointer; user-select:none}
+
+  .simView{height:260px; border-radius:12px; background:linear-gradient(180deg,#fff,#f7fff7); display:flex; align-items:center; justify-content:center}
+  .planet{width:40px; height:40px; border-radius:50%; background:var(--green-600); position:relative}
+  .orbit{width:220px; height:220px; border-radius:50%; border:2px dashed rgba(10,140,77,.12); position:relative; display:flex; align-items:center; justify-content:center}
+
+  /* responsive */
+  @media (max-width:920px){
+    .hero{grid-template-columns:1fr; gap:1rem}
+    .gameWrap{grid-template-columns:1fr}
+    .sidebar{position:relative; top:0}
+    .brand h1{font-size:1.05rem}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logoBadge"><img src="capa.png" alt="logo padrinhos"/></div>
+    <div>
+      <h1>magic.com</h1>
+      <p>Os Padrinhos Mágicos</p>
+    </div>
+  </div>
+
+  <nav class="topnav">
+    <button class="btn ghost" data-goto="home">Início</button>
+    <button class="btn ghost" data-goto="categories">Categorias</button>
+    <div style="width:8px"></div>
+    <span id="topWelcome" style="font-weight:900;color:#ffffff;"></span>
+    <button id="btnLogin" class="btn pink" data-goto="login">Entrar</button>
+    <button id="btnRegister" class="btn pink" data-goto="register">Cadastrar</button>
+    <button id="btnLogout" class="btn" style="display:none;background:#ff7b98;color:#fff">Sair</button>
+  </nav>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section id="home" class="view active">
+    <div class="hero">
+      <div class="cover card">
+        <img src="capa.png" alt="Capa padrinhos magicos">
+      </div>
+
+      <div class="heroCard">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div>
+            <div class="heroTitle">Bem-vindo(a) ao Mundo Mágico</div>
+            <div class="heroTag">Jogos fáceis, coloridos e cheios de aventuras para crianças do Fundamental I</div>
+          </div>
+          <div style="text-align:right">
+            <div class="ctaTiny">Aprender brincando</div>
+            <div style="height:8px"></div>
+            <div class="profile">
+              <div class="avatar" id="navAvatar"><img src="baby.jfif" alt="avatar" id="navAvatarImg"></div>
+              <div style="text-align:left">
+                <div style="font-weight:900;font-size:.95rem" id="navName">Convidado</div>
+                <div style="font-size:.78rem;color:var(--muted)">Toque em Entrar para criar seu perfil</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bigActions">
+          <button class="ctaBig play" data-goto="categories">Vamos Jogar! 🎲</button>
+          <button class="ctaBig join" data-goto="register">Criar Perfil</button>
+          <button class="btn ghost" data-goto="login">Já tenho conta</button>
+        </div>
+
+        <div style="margin-top:1rem" class="card">
+          <strong style="display:block; margin-bottom:.4rem; font-size:1.05rem">Escolha um reino:</strong>
+          <div class="cats">
+            <div class="cat math" data-cat="matematica"><div class="title">Matemática</div><div class="desc">Operações, medidas e lojinha mágica</div></div>
+            <div class="cat port" data-cat="portugues"><div class="title">Português</div><div class="desc">Cantigas, rimas e textos</div></div>
+            <div class="cat hist" data-cat="historia"><div class="title">História</div><div class="desc">Linha do tempo com datas</div></div>
+            <div class="cat science" data-cat="ciencias"><div class="title">Ciências</div><div class="desc">Memória e simulador</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGIN -->
+  <section id="login" class="view">
+    <div class="card" style="max-width:540px;margin:0 auto">
+      <h2 style="font-family:'Luckiest Guy', cursive">Entrar</h2>
+      <form id="loginForm" class="fieldset">
+        <input id="loginEmail" type="email" placeholder="E-mail" required />
+        <input id="loginPassword" type="password" placeholder="Senha" required />
+        <div class="row" style="justify-content:flex-end">
+          <button class="btn pink" type="submit">Entrar</button>
+          <button class="btn ghost" type="button" data-goto="register">Criar conta</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- REGISTER -->
+  <section id="register" class="view">
+    <div class="card" style="max-width:620px;margin:0 auto">
+      <h2 style="font-family:'Luckiest Guy', cursive">Criar Perfil</h2>
+      <form id="registerForm" class="fieldset">
+        <input id="regName" type="text" placeholder="Nome (como quer aparecer)" required />
+        <input id="regEmail" type="email" placeholder="E-mail" required />
+        <input id="regPassword" type="password" placeholder="Senha (mín. 4)" minlength="4" required />
+        <div style="display:flex;gap:.6rem;align-items:center;margin-top:.4rem">
+          <div>
+            <label style="font-weight:900">Foto de perfil</label>
+            <div style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem">
+              <div class="avatar" style="width:72px;height:72px"><img src="cosmo.jfif" id="previewRegister" alt="preview"></div>
+              <div>
+                <input id="profileUpload" type="file" accept="image/*">
+                <div style="font-size:.85rem;color:var(--muted);font-weight:800">Escolha uma imagem (opcional)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="justify-content:flex-end;margin-top:.8rem">
+          <button class="btn primary" type="submit">Criar conta</button>
+          <button class="btn ghost" type="button" data-goto="login">Já tenho conta</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section id="categories" class="view">
+    <div class="card">
+      <h2>Escolha a Categoria</h2>
+      <p style="color:var(--muted); font-weight:800">Toque em um reino para começar a jogar</p>
+      <div class="cats" style="margin-top:.8rem">
+        <div class="cat math" data-cat="matematica"><div class="title">Matemática</div><div class="desc">Operações, medidas e lojinha</div></div>
+        <div class="cat port" data-cat="portugues"><div class="title">Português</div><div class="desc">Cantigas e rimas</div></div>
+        <div class="cat hist" data-cat="historia"><div class="title">História</div><div class="desc">Linha do tempo com datas</div></div>
+      
+        <div class="cat science" data-cat="ciencias"><div class="title">Ciências</div><div class="desc">Memória & Simulador</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME SHELL -->
+  <section id="gameShell" class="view">
+    <div class="hud card row">
+      <div class="pill">Usuário: <span id="hudUser">—</span></div>
+      <div class="pill">Pontos: <span id="hudPoints">0</span></div>
+      <div class="pill">Moedas: <span id="hudCoins">0</span></div>
+      <div class="pill">Estrelas: <span id="hudStars">0</span></div>
+      <div style="flex:1"></div>
+      <button class="btn ghost" data-goto="categories">Trocar Categoria</button>
+    </div>
+
+    <div id="gameContainer" class="gameWrap">
+      <div class="gameArea card" id="gameArea"></div>
+      <aside class="sidebar card">
+        <h3 id="sideTitle">Instruções</h3>
+        <div id="sideContent" style="color:var(--muted); font-weight:800">Escolha um jogo e leia as instruções aqui.</div>
+      </aside>
+    </div>
+  </section>
+
+  <footer style="max-width:1150px;margin:1rem auto;padding:0 1rem;color:var(--muted);font-weight:800">
+    magic.com — Os Padrinhos Mágicos • Aprender brincando
+  </footer>
+</main>
+
+<script>
+/* =========================
+   Estado & utilitários
+   ========================= */
+const state = { user:null, points:0, coins:0, stars:0, category:null };
+const views = ['home','login','register','categories','gameShell'];
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+/* Navegação */
+function setView(id){
+  views.forEach(v=>{ const el=document.getElementById(v); if(!el) return; el.classList.toggle('active', v===id); });
+  document.getElementById('gameShell').classList.toggle('active', id==='gameShell');
+}
+$$('[data-goto]').forEach(b=> b.addEventListener('click', ()=>{
+  const target = b.getAttribute('data-goto');
+  if((target==='categories' || target==='gameShell') && !requireAuth()){ setView('login'); return; }
+  setView(target);
+}));
+
+/* Auth: localStorage-based (didático) */
+function requireAuth(){ return !!state.user; }
+function saveProfile(){ if(!state.user) return; localStorage.setItem('pm_profile_'+state.user.email, JSON.stringify({name:state.user.name, points:state.points, coins:state.coins, stars:state.stars, avatar: state.user.avatar || null })); }
+function loadProfile(email){ const raw = localStorage.getItem('pm_profile_'+email); return raw ? JSON.parse(raw) : null; }
+
+/* Atualiza HUD / nav avatar */
+function updateHUD(){
+  $('#hudUser').textContent = state.user?.name || '—';
+  $('#hudPoints').textContent = state.points;
+  $('#hudCoins').textContent = state.coins;
+  $('#hudStars').textContent = state.stars;
+  $('#topWelcome').textContent = state.user ? `Olá, ${state.user.name}` : '';
+  $('#navName').textContent = state.user ? state.user.name : 'Convidado';
+  const avatarImg = document.getElementById('navAvatarImg');
+  if(state.user && state.user.avatar) avatarImg.src = state.user.avatar;
+  else avatarImg.src = 'fotoaqui.png';
+  const navAvatarSmall = document.getElementById('previewRegister');
+  if(navAvatarSmall) navAvatarSmall.src = state.user && state.user.avatar ? state.user.avatar : 'fotoaqui.png';
+}
+
+/* LOGIN / REGISTER logic */
+$('#registerForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const name = $('#regName').value.trim();
+  const email = $('#regEmail').value.trim().toLowerCase();
+  const pass = $('#regPassword').value;
+  if(!name || !email || pass.length < 4){ alert('Preencha corretamente.'); return; }
+  const key = 'pm_auth_'+email;
+  if(localStorage.getItem(key)){ alert('E-mail já cadastrado. Faça login.'); return; }
+
+  // avatar file (optional)
+  const fileInput = $('#profileUpload');
+  let avatarData = null;
+  if(fileInput && fileInput.files && fileInput.files[0]){
+    avatarData = await fileToDataURL(fileInput.files[0]);
+  }
+
+  localStorage.setItem(key, JSON.stringify({name,email,pass}));
+  localStorage.setItem('pm_profile_'+email, JSON.stringify({name, points:0, coins:0, stars:0, avatar: avatarData}));
+  alert('Conta criada! Faça login.');
+  setView('login');
+});
+
+$('#profileUpload').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const img = await fileToDataURL(file);
+  $('#previewRegister').src = img;
+});
+
+/* Login */
+$('#loginForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const email = $('#loginEmail').value.trim().toLowerCase();
+  const pass = $('#loginPassword').value;
+  const key = 'pm_auth_'+email;
+  const raw = localStorage.getItem(key);
+  if(!raw){ alert('Usuário não encontrado.'); return; }
+  const auth = JSON.parse(raw);
+  if(auth.pass !== pass){ alert('Senha incorreta.'); return; }
+  // load profile
+  const prof = loadProfile(email) || {name:auth.name, points:0, coins:0, stars:0, avatar:null};
+  state.user = { name: prof.name, email: email, avatar: prof.avatar || null };
+  state.points = prof.points || 0; state.coins = prof.coins || 0; state.stars = prof.stars || 0;
+  $('#btnLogin').style.display='none'; $('#btnRegister').style.display='none'; $('#btnLogout').style.display='inline-block';
+  updateHUD(); setView('categories'); localStorage.setItem('pm_last', state.user.email);
+});
+
+/* Logout */
+$('#btnLogout').addEventListener('click', ()=>{
+  saveProfile();
+  state.user = null; state.points=0; state.coins=0; state.stars=0;
+  $('#btnLogin').style.display='inline-block'; $('#btnRegister').style.display='inline-block'; $('#btnLogout').style.display='none';
+  updateHUD(); setView('home');
+});
+
+/* File -> DataURL util */
+function fileToDataURL(file){
+  return new Promise((res, rej)=>{
+    const fr = new FileReader();
+    fr.onload = ()=> res(fr.result);
+    fr.onerror = ()=> rej('erro');
+    fr.readAsDataURL(file);
+  });
+}
+
+/* Profile edit: allow child to change photo after login */
+function showProfileEditor(){
+  // small modal-like prompt (simple)
+  const popup = document.createElement('div');
+  popup.style.position='fixed'; popup.style.left=0; popup.style.top=0; popup.style.right=0; popup.style.bottom=0; popup.style.background='rgba(0,0,0,.35)';
+  popup.style.display='flex'; popup.style.alignItems='center'; popup.style.justifyContent='center'; popup.style.zIndex=120;
+  const box = document.createElement('div'); box.style.background='#fff'; box.style.padding='1rem'; box.style.borderRadius='12px'; box.style.minWidth='320px';
+  box.innerHTML = `<h3 style="margin:0 0 .4rem 0">Editar Perfil</h3>
+    <div style="display:flex;gap:.6rem;align-items:center">
+      <div class="avatar" style="width:84px;height:84px"><img id="editAvatarPreview" src="${state.user && state.user.avatar ? state.user.avatar : 'padrinhos.jfif'}" style="width:100%;height:100%;object-fit:cover"></div>
+      <div>
+        <input id="editAvatarFile" type="file" accept="image/*"><div style="font-size:.85rem;color:var(--muted);font-weight:800">Escolha uma foto</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:.8rem"><button id="editCancel" class="btn ghost">Cancelar</button><button id="editSave" class="btn primary">Salvar</button></div>`;
+  popup.appendChild(box);
+  document.body.appendChild(popup);
+  $('#editAvatarFile').addEventListener('change', async (e)=> {
+    const f = e.target.files[0]; if(!f) return; const data = await fileToDataURL(f); $('#editAvatarPreview').src = data;
+  });
+  $('#editCancel').addEventListener('click', ()=> popup.remove());
+  $('#editSave').addEventListener('click', async ()=>{
+    const file = $('#editAvatarFile').files[0];
+    let data = $('#editAvatarPreview').src;
+    if(file){ data = await fileToDataURL(file); }
+    state.user.avatar = data;
+    saveProfile();
+    updateHUD();
+    popup.remove();
+  });
+}
+
+/* Click avatar on nav to edit (if logged) */
+$('#navAvatar').addEventListener('click', ()=>{
+  if(!state.user){ setView('login'); return; }
+  showProfileEditor();
+});
+
+/* Persist last session restore */
+(function initSession(){
+  const last = localStorage.getItem('pm_last');
+  if(last){
+    const prof = loadProfile(last);
+    const authRaw = localStorage.getItem('pm_auth_'+last);
+    if(authRaw && prof){
+      const auth = JSON.parse(authRaw);
+      state.user = { name: prof.name || auth.name, email: last, avatar: prof.avatar || null };
+      state.points = prof.points || 0; state.coins = prof.coins || 0; state.stars = prof.stars || 0;
+      $('#btnLogin').style.display='none'; $('#btnRegister').style.display='none'; $('#btnLogout').style.display='inline-block';
+    }
+  }
+  updateHUD();
+})();
+
+/* Save profile on unload */
+window.addEventListener('beforeunload', ()=> saveProfile());
+
+/* Award helper */
+function award({points=0, coins=0, stars=0}){
+  state.points += points; state.coins += coins; state.stars += stars;
+  updateHUD(); saveProfile();
+}
+
+/* =========================
+   Categoria click -> abrir jogos
+   ========================= */
+$$('.cat').forEach(el => el.addEventListener('click', ()=>{
+  if(!requireAuth()){ setView('login'); return; }
+  const cat = el.getAttribute('data-cat');
+  state.category = cat;
+  openCategory(cat);
+}));
+
+/* Open category dispatcher */
+const gameArea = $('#gameArea'), sideTitle = $('#sideTitle'), sideContent = $('#sideContent');
+
+function openCategory(cat){
+  setView('gameShell'); updateHUD();
+  if(cat==='matematica') loadMath();
+  if(cat==='portugues') loadPortuguese();
+  if(cat==='historia') loadHistory();
+  if(cat==='geografia') loadGeography();
+  if(cat==='ciencias') loadScience();
+}
+
+/* =========================
+   MATEMÁTICA (com lojinha)
+   ========================= */
+function loadMath(){
+  sideTitle.textContent = 'Matemática — Loja Mágica';
+  sideContent.innerHTML = 'Resolva problemas, escolha medidas e troco. Cada acerto dá pontos!';
+  gameArea.innerHTML = `
+    <h2>Loja Mágica — Matemática</h2>
+    <div style="display:flex;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap">
+      <button class="btn primary" id="mathNew">Nova Missão</button>
+      <button class="btn ghost" id="mathMode">Modo Misto</button>
+    </div>
+    <div id="mathMission" class="card"></div>
+  `;
+  $('#mathNew').addEventListener('click', ()=> newMath('operacoes'));
+  $('#mathMode').addEventListener('click', ()=> newMath('loja'));
+  newMath('loja');
+}
+function newMath(kind){
+  const el = $('#mathMission');
+  function r(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+  if(kind==='loja') kind = (Math.random()<0.45?'operacoes':(Math.random()<0.6?'capacidade':'troco'));
+  if(kind==='operacoes'){
+    const q=r(2,6), p=r(3,9), total=q*p;
+    el.innerHTML = `<h3>Cliente no balcão</h3><p>Preciso de ${q} caixas. Cada uma custa ${p} moedas. Quanto vou gastar?</p>
+      <form id="mform" class="fieldset"><input id="mans" placeholder="Digite o total"/><div style="display:flex;justify-content:flex-end;margin-top:.4rem"><button class="btn primary" type="submit">Confirmar</button><button class="btn ghost" id="mskip" type="button">Pular</button></div></form><div id="mfb" class="feedback"></div>`;
+    $('#mform').addEventListener('submit', (e)=>{ e.preventDefault(); const v=Number($('#mans').value.replace(',','.')); if(v===total){ $('#mfb').textContent='Muito bem!'; $('#mfb').className='feedback ok'; award({points:10,coins:2}); } else { $('#mfb').textContent='Resposta incorreta. Resposta: '+total; $('#mfb').className='feedback err'; }});
+    $('#mskip').addEventListener('click', ()=> newMath('operacoes'));
+  } else if(kind==='capacidade'){
+    const opts=[100,150,200,250,300,500,1000];
+    const want=opts[Math.floor(Math.random()*opts.length)];
+    let fr=[100,200,250,500];
+    if(!fr.includes(want)) fr[Math.floor(Math.random()*fr.length)] = want;
+    el.innerHTML = `<h3>Pedido de poção</h3><p>Cliente: "Quero ${want} ml. Qual frasco escolher?"</p><div id="cap" class="choices"></div><div id="cfb" class="feedback"></div>`;
+    fr.forEach(f=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=f+' ml'; b.addEventListener('click', ()=> { if(f===want){ $('#cfb').textContent='Acertou!'; $('#cfb').className='feedback ok'; award({points:8,coins:1}); } else { $('#cfb').textContent='Errado. Resposta: '+want+' ml'; $('#cfb').className='feedback err'; } }); $('#cap').appendChild(b); });
+  } else if(kind==='troco'){
+    const tenho=r(6,20), custa=r(2,tenho-1), troco=tenho-custa;
+    el.innerHTML = `<h3>Troco</h3><p>Tenho ${tenho} moedas. O item custa ${custa}. Quanto sobra?</p><form id="tform" class="fieldset"><input id="tans" placeholder="Digite o troco"/><div style="display:flex;justify-content:flex-end;margin-top:.4rem"><button class="btn primary" type="submit">Confirmar</button><button class="btn ghost" id="tskip" type="button">Pular</button></div></form><div id="tfb" class="feedback"></div>`;
+    $('#tform').addEventListener('submit', (e)=>{ e.preventDefault(); const v=Number($('#tans').value.replace(',','.')); if(v===troco){ $('#tfb').textContent='Correto!'; $('#tfb').className='feedback ok'; award({points:8,coins:1}); } else { $('#tfb').textContent='Errado. Troco: '+troco; $('#tfb').className='feedback err'; }});
+    $('#tskip').addEventListener('click', ()=> newMath('troco'));
+  }
+}
+
+/* =========================
+   PORTUGUÊS — Cantigas
+   ========================= */
+function loadPortuguese(){
+  sideTitle.textContent = 'Português — Castelo das Cantigas';
+  sideContent.innerHTML = 'Complete cantigas, adivinhe e monte estrofes.';
+  gameArea.innerHTML = `
+    <h2>Castelo das Cantigas</h2>
+    <div style="display:flex;gap:.6rem;margin-bottom:.6rem">
+      <button class="btn primary" id="ptFill">Complete a Cantiga</button>
+      <button class="btn pink" id="ptGuess">Adivinhe a Cantiga</button>
+      <button class="btn ghost" id="ptAssemble">Monte a Cantiga</button>
+    </div>
+    <div id="ptArea"></div>
+  `;
+  $('#ptFill').addEventListener('click', ptComplete);
+  $('#ptGuess').addEventListener('click', ptGuess);
+  $('#ptAssemble').addEventListener('click', ptAssemble);
+  ptComplete();
+}
+const cantigas = [
+  {title:'Atirei o pau no gato', lines:['Atirei o pau no gato','Mas o gato não morreu','Dona Chica admirou-se','Do berro que o gato deu']},
+  {title:'Ciranda Cirandinha', lines:['Ciranda, cirandinha','Vamos todos cirandar','As mãos na roda','Que eu quero ver você passar']},
+  {title:'O Cravo Brigou com a Rosa', lines:['O cravo brigou com a rosa','Debaixo de uma sacada','O cravo saiu ferido','E a rosa despedaçada']}
+];
+function ptComplete(){
+  const area = $('#ptArea'); area.innerHTML='';
+  const c = cantigas[Math.floor(Math.random()*cantigas.length)];
+  const li = Math.floor(Math.random()*c.lines.length);
+  const line = c.lines[li];
+  const words = line.split(' ');
+  const hide = Math.floor(Math.random()*words.length);
+  const missing = words[hide].replace(/[.,;:!?]/g,'');
+  words[hide] = '_____';
+  area.innerHTML = `<h3>Complete a Cantiga — "${c.title}"</h3><p style="font-weight:900">${words.join(' ')}</p><div style="margin-top:.6rem">Escolha a palavra certa:</div><div id="dragPool" class="choices" style="margin-top:.6rem"></div><div id="dragFeedback" class="feedback"></div>`;
+  const options=[missing];
+  while(options.length<4){ const w = (cantigas[Math.floor(Math.random()*cantigas.length)].lines[Math.floor(Math.random()*4)].split(' ')[Math.floor(Math.random()*5)]||'cantiga').replace(/[.,;:!?]/g,''); if(w && !options.includes(w)) options.push(w); }
+  for(let i=options.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [options[i],options[j]]=[options[j],options[i]]; }
+  options.forEach(opt=>{
+    const b=document.createElement('button'); b.className='choice draggable'; b.textContent=opt; b.draggable=true;
+    b.addEventListener('dragstart', e=> e.dataTransfer.setData('text/plain', opt));
+    $('#dragPool').appendChild(b);
+  });
+  const drop = document.createElement('div'); drop.className='dropzone'; drop.textContent='Arraste a palavra aqui';
+  drop.addEventListener('dragover', e=> e.preventDefault());
+  drop.addEventListener('drop', e=>{ e.preventDefault(); const t=e.dataTransfer.getData('text/plain'); drop.textContent=t; if(t===missing){ $('#dragFeedback').textContent='Perfeito!'; $('#dragFeedback').className='feedback ok'; award({points:8,coins:1}); } else { $('#dragFeedback').textContent='Quase — resposta: '+missing; $('#dragFeedback').className='feedback err'; } });
+  $('#dragPool').parentNode.appendChild(drop);
+}
+function ptGuess(){
+  const area = $('#ptArea'); area.innerHTML='';
+  const c = cantigas[Math.floor(Math.random()*cantigas.length)];
+  const snippet = c.lines[Math.floor(Math.random()*c.lines.length)];
+  const choices = [c.title];
+  while(choices.length<3){ const t=cantigas[Math.floor(Math.random()*cantigas.length)].title; if(!choices.includes(t)) choices.push(t); }
+  for(let i=choices.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [choices[i],choices[j]]=[choices[j],choices[i]]; }
+  area.innerHTML = `<h3>Adivinhe a Cantiga</h3><p style="font-weight:900">Trecho: "${snippet}"</p><div id="guessPool" class="choices" style="margin-top:.6rem"></div><div id="guessFeedback" class="feedback"></div>`;
+  choices.forEach(ch=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=ch; b.addEventListener('click', ()=> { if(ch===c.title){ $('#guessFeedback').textContent='Acertou!'; $('#guessFeedback').className='feedback ok'; award({points:10,coins:2}); } else { $('#guessFeedback').textContent='Errado. Era: '+c.title; $('#guessFeedback').className='feedback err'; } }); $('#guessPool').appendChild(b); });
+}
+function ptAssemble(){
+  const area = $('#ptArea'); area.innerHTML='';
+  const c = cantigas[Math.floor(Math.random()*cantigas.length)];
+  const stanzas = c.lines.slice();
+  const shuffled = stanzas.sort(()=>Math.random()-0.5);
+  area.innerHTML = `<h3>Monte a Cantiga — ${c.title}</h3><p>Arraste as estrofes para formar a cantiga na ordem correta.</p><div id="stanzaPool" class="choices"></div><div style="margin-top:.6rem"><button class="btn primary" id="ptCheck">Verificar</button> <button class="btn ghost" id="ptPlay">Ouvir</button></div><div id="ptAssembleFeed" class="feedback"></div>`;
+  const pool = $('#stanzaPool');
+  shuffled.forEach((s,idx)=>{ const div = document.createElement('div'); div.className='draggable choice'; div.draggable=true; div.textContent=s; div.dataset.origIndex = stanzas.indexOf(s); div.addEventListener('dragstart', e=> e.dataTransfer.setData('text/plain', idx)); pool.appendChild(div); });
+  const orderArea = document.createElement('div'); orderArea.style.marginTop='.8rem'; orderArea.innerHTML = '<div style="font-weight:900;margin-bottom:.4rem">Sua ordem:</div><div id="orderTarget" class="dropzone" style="min-height:120px;flex-direction:column;align-items:flex-start;padding:.6rem"></div>';
+  pool.parentNode.insertBefore(orderArea, pool.nextSibling);
+  const orderTarget = $('#orderTarget');
+  orderTarget.addEventListener('dragover', e=>e.preventDefault());
+  orderTarget.addEventListener('drop', e=>{ e.preventDefault(); const idx = Number(e.dataTransfer.getData('text/plain')); const dragged = pool.children[idx]; if(!dragged) return; const clone = dragged.cloneNode(true); clone.draggable=false; orderTarget.appendChild(clone);});
+  $('#ptCheck').addEventListener('click', ()=> { const user = Array.from(orderTarget.children).map(n=>n.textContent.trim()); if(user.length !== stanzas.length){ $('#ptAssembleFeed').textContent='Complete a ordem com todas as estrofes.'; $('#ptAssembleFeed').className='feedback err'; return; } const ok = user.every((t,i)=> t === stanzas[i]); if(ok){ $('#ptAssembleFeed').textContent='Maravilha! Montou corretamente.'; $('#ptAssembleFeed').className='feedback ok'; award({points:12,coins:3,stars:1}); } else { $('#ptAssembleFeed').textContent='Ordem incorreta. Tente novamente.'; $('#ptAssembleFeed').className='feedback err'; } });
+  $('#ptPlay').addEventListener('click', ()=> { const utter = new SpeechSynthesisUtterance(c.lines.join('. ')); utter.lang='pt-BR'; speechSynthesis.cancel(); speechSynthesis.speak(utter); });
+}
+
+/* =========================
+   HISTÓRIA — Linha do tempo com datas
+   ========================= */
+function loadHistory(){
+  sideTitle.textContent = 'História — Máquina do Tempo';
+  sideContent.innerHTML = 'Arraste eventos em ordem (do mais antigo ao mais recente). As datas já aparecem para ajudar.';
+  const events = [
+    {year:1492, text:'1492 — Viagem de Cristóvão Colombo (chegada às Américas)'},
+    {year:1500, text:'1500 — Chegada da expedição de Pedro Álvares Cabral ao Brasil'},
+    {year:1822, text:'1822 — Independência do Brasil'},
+    {year:1889, text:'1889 — Proclamação da República (Brasil)'},
+    {year:1969, text:'1969 — Primeiro homem na Lua'},
+    {year:2007, text:'2007 — Lançamento do primeiro iPhone'}
+  ];
+  const shuffled = events.slice().sort(()=>Math.random()-0.5);
+  gameArea.innerHTML = `<h2>Máquina do Tempo</h2><p>Coloque do mais antigo para o mais recente.</p><div id="timeline" class="timeline card" style="padding:.6rem"></div><div style="display:flex;justify-content:flex-end;margin-top:.6rem"><button class="btn primary" id="timeCheck">Verificar</button><button class="btn ghost" id="timeShuffle">Embaralhar</button></div><div id="timeFeedback" class="feedback"></div>`;
+  const tl = $('#timeline');
+  function render(list){
+    tl.innerHTML = '';
+    list.forEach((ev,idx)=>{ const d=document.createElement('div'); d.className='time-card'; d.draggable=true; d.dataset.idx=idx; d.innerHTML=`<div style="font-weight:900">${ev.year}</div><div style="font-size:.95rem">${ev.text.replace(ev.year+' — ','')}</div>`; d.addEventListener('dragstart', e=> e.dataTransfer.setData('text/plain', idx)); d.addEventListener('dragover', e=> e.preventDefault()); d.addEventListener('drop', e=>{ e.preventDefault(); const from=Number(e.dataTransfer.getData('text/plain')); const to=Number(d.dataset.idx); [list[from], list[to]]=[list[to], list[from]]; render(list); }); tl.appendChild(d); });
+  }
+  render(shuffled);
+  $('#timeCheck').addEventListener('click', ()=> {
+    const userList = Array.from($('#timeline').children).map(n=>n.querySelector('div').textContent.trim());
+    const correct = events.slice().sort((a,b)=>a.year-b.year).map(e=>String(e.year));
+    const ok = userList.every((t,i)=> t===correct[i]);
+    if(ok){ $('#timeFeedback').textContent='Linha do tempo correta!'; $('#timeFeedback').className='feedback ok'; award({points:15,coins:4,stars:1}); } else { $('#timeFeedback').textContent='Alguns eventos fora de ordem. Tente de novo.'; $('#timeFeedback').className='feedback err'; }
+  });
+  $('#timeShuffle').addEventListener('click', ()=> { const newS = shuffled.sort(()=>Math.random()-0.5); render(newS); $('#timeFeedback').textContent=''; });
+}
+
+/* =========================
+   CIÊNCIAS — Memória & Simulador
+   ========================= */
+function loadScience(){
+  sideTitle.textContent = 'Ciências — Memória & Simulador';
+  sideContent.innerHTML = 'Memória temática + simulador de elementos.';
+  gameArea.innerHTML = `
+    <h2>Ciências</h2>
+    <div style="display:flex;gap:.6rem;margin-bottom:.6rem">
+      <button class="btn primary" id="memStart">Jogo da Memória</button>
+      <button class="btn ghost" id="simStart">Simulador</button>
+    </div>
+    <div id="scienceArea"></div>
+  `;
+  $('#memStart').addEventListener('click', buildMemory);
+  $('#simStart').addEventListener('click', buildSimulator);
+  buildMemory();
+}
+function buildMemory(){
+  const icons = ['Árvore','Sol','Água','Folha','Pássaro','Pedra','Lua','Fogo'];
+  const cards = icons.concat(icons).sort(()=>Math.random()-0.5);
+  $('#scienceArea').innerHTML = `<div class="gridMem"></div><div style="margin-top:.6rem"><button class="btn ghost" id="memReset">Reiniciar</button> <span id="memFeedback" class="feedback"></span></div>`;
+  const grid = $('.gridMem');
+  let first=null, second=null, lock=false, matches=0;
+  cards.forEach((c,i)=>{ const card = document.createElement('div'); card.className='cardMem'; card.dataset.value=c; card.textContent='?'; card.addEventListener('click', ()=> {
+    if(lock || card===first || card.classList.contains('matched')) return;
+    card.textContent = c;
+    if(!first){ first = card; return; }
+    second = card; lock = true;
+    setTimeout(()=> {
+      if(first.dataset.value === second.dataset.value){ first.classList.add('matched'); second.classList.add('matched'); matches++; award({points:5,coins:1}); $('#memFeedback').textContent = `Pares: ${matches}`; }
+      else { first.textContent='?'; second.textContent='?'; $('#memFeedback').textContent='Tente novamente'; }
+      first=null; second=null; lock=false;
+      if(matches === icons.length){ $('#memFeedback').textContent='Você venceu! Todos os pares encontrados.'; award({points:15,coins:3,stars:1}); }
+    },700);
+  }); grid.appendChild(card); });
+  $('#memReset').addEventListener('click', buildMemory);
+}
+function buildSimulator(){
+  $('#scienceArea').innerHTML = `
+    <h3>Simulador: Elementos</h3>
+    <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:.6rem">
+      <label style="font-weight:800">Velocidade:</label>
+      <input id="orbitSpeed" type="range" min="0" max="5" value="2" style="flex:1"/>
+      <button class="btn pink" id="toggleRotate">Ativar Rotação</button>
+    </div>
+    <div class="simView card">
+      <div id="orbit" class="orbit">
+        <div id="planet" class="planet"></div>
+      </div>
+    </div>
+    <div style="margin-top:.6rem" id="simInfo"></div>
+  `;
+  const planet = $('#planet'), orbit = $('#orbit'), simInfo = $('#simInfo');
+  let angle=0, rotating=false; let speed = Number($('#orbitSpeed').value);
+  $('#orbitSpeed').addEventListener('input', e=> speed = Number(e.target.value));
+  $('#toggleRotate').addEventListener('click', ()=> { rotating = !rotating; $('#toggleRotate').textContent = rotating ? 'Desativar Rotação' : 'Ativar Rotação'; });
+  function frame(){
+    angle = (angle + (0.6 * speed)) % 360;
+    const rad = angle * Math.PI / 180;
+    const r = (orbit.clientWidth/2) - 40;
+    const cx = orbit.clientWidth/2 + r * Math.cos(rad) - 20;
+    const cy = orbit.clientHeight/2 + r * Math.sin(rad) - 20;
+    planet.style.position='absolute'; planet.style.left = cx + 'px'; planet.style.top = cy + 'px';
+    if(rotating) planet.style.transform = `rotate(${angle*3}deg)`; else planet.style.transform = 'rotate(0deg)';
+    simInfo.textContent = `Translação: ângulo ${Math.round(angle)}°. Rotação: ${rotating? 'ativa' : 'pausada'}.`;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* =========================
+   Inicialização
+   ========================= */
+function init(){
+  const last = localStorage.getItem('pm_last');
+  if(last){
+    const prof = loadProfile(last);
+    const authRaw = localStorage.getItem('pm_auth_'+last);
+    if(authRaw && prof){
+      const auth = JSON.parse(authRaw);
+      state.user = { name: prof.name || auth.name, email: last, avatar: prof.avatar || null };
+      state.points = prof.points || 0; state.coins = prof.coins || 0; state.stars = prof.stars || 0;
+      $('#btnLogin').style.display='none'; $('#btnRegister').style.display='none'; $('#btnLogout').style.display='inline-block';
+    }
+  }
+  updateHUD();
+}
+init();
+
+/* small helpers */
+function loadGeography(){ openCategory('geografia'); }
+
+/* Keyboard fun */
+document.addEventListener('keydown', e=>{ if(e.key.toLowerCase()==='h') setView('home'); if(e.key.toLowerCase()==='c'){ if(requireAuth()) setView('categories'); else setView('login'); } });
+
+</script>
+</body>
+</html>
